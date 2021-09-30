@@ -4,4 +4,4 @@ metadata:
   name: rancher
   namespace: kube-system
 spec:
-  chart: https://releases.rancher.com/server-charts/stable/rancher-2.5.9.tgz
+  chart: https://releases.rancher.com/server-charts/latest/rancher-2.6.0.tgz
