@@ -1,0 +1,51 @@
+---
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: 1-21
+  namespace: system-upgrade
+  labels:
+    k3s-upgrade: server
+spec:
+  concurrency: 1
+  #version:  latest
+  version: "v1.21.4-1"
+  nodeSelector:
+    matchExpressions:
+      - {key: kubernetes.io/hostname, operator: Exists}
+  serviceAccountName: system-upgrade
+  cordon: true
+  drain:
+    force: true
+    disableEviction: true
+  upgrade:
+    image: quay.io/mudler/c3os
+    command:
+    - "/usr/sbin/suc-upgrade"
+---
+apiVersion: upgrade.cattle.io/v1
+kind: Plan
+metadata:
+  name: latest
+  namespace: system-upgrade
+  labels:
+    k3s-upgrade: server
+spec:
+  concurrency: 1
+  channel: "https://github.com/mudler/c3os/releases/latest"
+  #version:  latest
+  #version: "v1.21.4-1"
+  nodeSelector:
+    matchExpressions:
+      - {key: c3os/latest, operator: Exists}
+  serviceAccountName: system-upgrade
+  cordon: true
+  drain:
+    force: true
+    disableEviction: true
+    #  drain:
+    #    force: true
+  upgrade:
+    image: quay.io/mudler/c3os
+    command:
+    - "/usr/sbin/suc-upgrade"
