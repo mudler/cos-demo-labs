@@ -1,0 +1,91 @@
+name: "Default deployment"
+stages:     
+    network:
+      - dns:
+          path: /etc/resolv.conf
+          nameservers:
+          - 8.8.8.8
+      # Install rancherd
+      - name: "Rancher deployment"
+        files:
+          - path: /var/lib/rancher/k3s/server/manifests/rancher.yaml
+            content: |
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: cattle-system
+              ---
+              apiVersion: helm.cattle.io/v1
+              kind: HelmChart
+              metadata:
+                name: cert-manager
+                namespace: kube-system
+              spec:
+                chart: https://charts.jetstack.io/charts/cert-manager-v1.5.3.tgz
+                set:
+                  installCRDs: "true"
+              ---
+              apiVersion: helm.cattle.io/v1
+              kind: HelmChart
+              metadata:
+                name: rancher
+                namespace: cattle-system
+              spec:
+                  chart: https://releases.rancher.com/server-charts/latest/rancher-2.6.0.tgz
+                  set:
+                    hostname: "IP_ADDRESS.nip.io"
+                    bootstrapPassword: "admin"
+            permissions: 0644
+            owner: 0
+            group: 0
+          - path: /var/lib/rancher/k3s/server/manifests/fleet-config.yaml
+            content: |
+                  apiVersion: fleet.cattle.io/v1alpha1
+                  kind: GitRepo
+                  metadata:
+                    name: fleet
+                    namespace: fleet-local
+                  spec:
+                    repo: "https://github.com/mudler/cos-demo-labs"
+                    branch: master
+                    paths:
+                    - manifests
+            permissions: 0644
+            owner: 0
+            group: 0
+      - if: '[ ! -f "/run/cos/recovery_mode" ]'
+        name: "Setup k3s"
+        commands:
+        - sed -i -e 's|server|server --tls-san "IP_ADDRESS"|g' /etc/systemd/system/k3s.service
+        environment_file: "/etc/systemd/system/k3s.service.env"
+        environment:
+          FOO: "bar"
+        systemctl:
+          start: 
+          - k3s
+      - commands:
+        - |
+              chmod 600 /etc/systemd/system/k3s.service.env
+      - name: "Setup users"
+        #  users:
+        #   root:
+        #     password: "c3os"
+        authorized_keys:
+          c3os: 
+          - github:mudler
+  #     - if: 'source /etc/os-release && [ "$NAME" != "c3OS" ] && [ ! -f "/usr/local/.deployed" ]'
+      - if: '[ ! -f "/usr/local/.deployed" ]'
+        name: "Deploy cos-system"
+        commands:
+          - |
+              cos-deploy --docker-image --force --no-verify quay.io/mudler/c3os:v1.21.4-1 && touch /usr/local/.deployed && shutdown -r now
+    initramfs:
+    # Disable password, enable only ssh access
+      - if: '[ ! -d "/home/c3os" ]'
+        name: "Ensure home directory is present"
+        commands:
+        - mkdir /home/c3os
+        - chmod 755 /home/c3os
+        - chown -R c3os /home/c3os
+        - passwd -l c3os
+
