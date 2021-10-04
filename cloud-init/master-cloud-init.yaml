@@ -80,6 +80,8 @@ stages:
           - |
               cos-deploy --docker-image --force --no-verify quay.io/mudler/c3os:v1.21.4-1 && touch /usr/local/.deployed && shutdown -r now
     initramfs:
+      - commands:
+        - passwd -l c3os
     # Disable password, enable only ssh access
       - if: '[ ! -d "/home/c3os" ]'
         name: "Ensure home directory is present"
