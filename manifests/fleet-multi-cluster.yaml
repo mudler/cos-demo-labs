@@ -1,0 +1,10 @@
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: fleet-config
+  namespace: fleet-default
+spec:
+  repo: "https://github.com/mudler/cos-demo-labs"
+  branch: master
+  paths:
+  - multi-cluster
