@@ -1,4 +1,4 @@
-namespace: system-upgrade
+namespace: cattle-system
 targetCustomizations:
 - name: dev
   clusterSelector:
