@@ -13,7 +13,7 @@ spec:
   nodeSelector:
     matchExpressions:
       - {key: kubernetes.io/hostname, operator: Exists}
-  serviceAccountName: system-upgrade
+  serviceAccountName:	system-upgrade-controller
   cordon: true
   drain:
     force: true
