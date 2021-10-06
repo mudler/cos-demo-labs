@@ -1,4 +1,4 @@
-namespace: fleet-mc-manifest-example
+namespace: system-upgrade
 targetCustomizations:
 - name: dev
   clusterSelector:
