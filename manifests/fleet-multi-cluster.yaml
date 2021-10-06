@@ -8,3 +8,5 @@ spec:
   branch: master
   paths:
   - multi-cluster
+  targets:
+  - clusterSelector: {}
