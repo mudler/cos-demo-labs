@@ -1,6 +1,10 @@
 name: "Default deployment"
 stages:
    network:
+     - dns:
+         path: /etc/resolv.conf
+         nameservers:
+         - 8.8.8.8
      - if: '[ ! -f "/usr/local/.deployed" ]'
        name: "Deploy cos-system"
        # here we specify the image to upgrade to
@@ -11,10 +15,6 @@ stages:
              cos-deploy --docker-image --force --no-verify quay.io/mudler/c3os:latest && \
              touch /usr/local/.deployed && \
              shutdown -r now
-     - dns:
-         path: /etc/resolv.conf
-         nameservers:
-         - 8.8.8.8
      - name: "Setup users"
        authorized_keys:
         c3os: 
