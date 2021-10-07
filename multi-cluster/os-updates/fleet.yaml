@@ -1,7 +1,7 @@
 namespace: cattle-system
 targetCustomizations:
 - name: dev
-  clusterSelector:
+  clusterGroupSelector:
     matchLabels:
       env: dev
   yaml:
@@ -10,7 +10,7 @@ targetCustomizations:
     - dev
 
 - name: test
-  clusterSelector:
+  clusterGroupSelector:
     matchLabels:
       env: test
   yaml:
@@ -19,7 +19,7 @@ targetCustomizations:
     - test
 
 - name: prod
-  clusterSelector:
+  clusterGroupSelector:
     matchLabels:
       env: prod
   yaml:
