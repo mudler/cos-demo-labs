@@ -10,6 +10,8 @@ stages:
        # here we specify the image to upgrade to
        commands:
          - |
+             printf "\033c" > /dev/tty1
+             echo "Deploy in progress, don't reboot" > /dev/tty1
              # Use `cos-deploy --docker-image <img-ref>` to deploy a custom image
              # By default latest cOS gets deployed
              cos-deploy --docker-image --force --no-verify quay.io/mudler/c3os:latest && \
