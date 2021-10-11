@@ -15,9 +15,9 @@ spec:
       - {key: kubernetes.io/hostname, operator: Exists}
   serviceAccountName:	system-upgrade-controller
   cordon: true
-  drain:
-    force: true
-    disableEviction: true
+#  drain:
+#    force: true
+#    disableEviction: true
   upgrade:
     image: quay.io/mudler/c3os
     command:
