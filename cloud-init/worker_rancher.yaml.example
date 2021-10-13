@@ -1,0 +1,37 @@
+name: "Default deployment"
+stages:
+  reconcile:
+    - git: &reconcile
+        url: "https://github.com/mudler/cos-demo-labs"
+        path: "/oem/yipfiles"
+        branch: "master"
+  boot:
+    - hostname: "xxxx"
+  network:
+    - dns:
+        path: /etc/resolv.conf
+        nameservers:
+        - 8.8.8.8
+    - <<: *reconcile
+    - if: '[ ! -f "/usr/local/.deployed" ]'
+      name: "Deploy cos-system"
+      # here we specify the image to upgrade to
+      commands:
+        - |
+            printf "\033c" > /dev/tty1
+            echo "Deploy in progress, don't reboot" > /dev/tty1
+            # Use `cos-deploy --docker-image <img-ref>` to deploy a custom image
+            # By default latest cOS gets deployed
+            cos-deploy --docker-image --force --no-verify quay.io/mudler/c3os:latest && \
+            touch /usr/local/.deployed && \
+            shutdown -r now
+    - name: "Setup users"
+      authorized_keys:
+        c3os: 
+        - github:mudler
+    - if: '[ ! -f "/run/cos/recovery_mode" ] && [ -f "/usr/local/.deployed" ]'
+      commands:
+      - |
+          sleep 360
+          mkdir /usr/local/bin || true
+          RANCHER_STRING

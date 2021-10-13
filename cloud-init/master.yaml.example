@@ -1,10 +1,16 @@
 name: "Default deployment"
 stages:
+    reconcile:
+    - git: &reconcile
+       url: "https://github.com/mudler/cos-demo-labs"
+       path: "/oem/yipfiles"
+       branch: "master"
     network:
       - dns:
           path: /etc/resolv.conf
           nameservers:
           - 8.8.8.8
+      - <<: *reconcile
       # Install rancherd
       - name: "Rancher deployment"
         files:

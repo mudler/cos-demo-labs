@@ -1,10 +1,16 @@
 name: "Default deployment"
-stages:     
+stages:
+   reconcile:
+    - git: &reconcile
+       url: "https://github.com/mudler/cos-demo-labs"
+       path: "/oem/yipfiles"
+       branch: "master"     
    network:
      - dns:
          path: /etc/resolv.conf
          nameservers:
          - 8.8.8.8
+     - <<: *reconcile
      - if: '[ ! -f "/run/cos/recovery_mode" ]'
        name: "Setup k3s"
        commands:
@@ -21,8 +27,6 @@ stages:
      - commands:
        - |
             chmod 600 /etc/systemd/system/k3s-agent.service.env
-       - ulimit -u unlimited
-       - ulimit -n 900000
      - name: "Setup users"
       #  users:
       #   root:
