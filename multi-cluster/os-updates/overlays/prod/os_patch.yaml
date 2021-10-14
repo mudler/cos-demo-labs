@@ -1,6 +1,2 @@
 spec:
   version: "v1.21.4-4"
-  cordon: true
-  drain:
-    force: true
-    disableEviction: true
