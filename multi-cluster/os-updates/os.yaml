@@ -9,7 +9,7 @@ metadata:
 spec:
   concurrency: 1
   #version:  latest
-  version: "v1.21.4-1"
+  version: "v1.21.4-20"
   nodeSelector:
     matchExpressions:
       - {key: kubernetes.io/hostname, operator: Exists}
